@@ -92,11 +92,11 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('username', 'password'))) {
             return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
 
@@ -106,11 +106,51 @@ class LoginController extends Controller
         return response()->json(['token' => $token, 'user' => $user]);
     }
 
+    public function loginLaravel(Request $request) {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+        $credentials = $request->only('username', 'password');
+        if (Auth::attempt($credentials)) {
+            return redirect()->intended(route('juegos.index'));
+        } else {
+            $error = 'Usuario incorrecto';
+            return view('auth.login', compact('error'));
+        }
+    }
+
+
+    
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Sesión cerrada correctamente']);
+        try {
+            // Revocar la sesión del usuario
+            Auth::logout();
+    
+            if ($request->wantsJson()) {
+                // Respuesta JSON para Angular
+                return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
+            }
+    
+            // Redirigir a la página de inicio de sesión en Laravel
+            return redirect('/login')->with('message', 'Sesión cerrada correctamente');
+        } catch (\Exception $e) {
+            if ($request->wantsJson()) {
+                // Manejo de error en JSON para Angular
+                return response()->json([
+                    'message' => 'Error al cerrar sesión',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+    
+            // Manejo de error con redirección en Laravel
+            return redirect('/login')->withErrors(['error' => 'Error al cerrar sesión']);
+        }
     }
+    
+    
+    
 
     public function user(Request $request)
     {

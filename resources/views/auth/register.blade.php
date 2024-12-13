@@ -9,62 +9,45 @@
                 <div class="card-header">Formulario de Registro</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register') }}" id="loginForm">
                         @csrf
-
                         <!-- username -->
                         <div class="form-group row">
                             <label for="username" class="col-md-4 col-form-label text-md-right">Nombre de Usuario</label>
-                            
                             <div class="col-md-6">
-                                <input id="username" type="text" name="username" class="form-control @error('username') is-invalid @else is-valid @enderror" value="{{ old('username') }}">
-                                @error('username')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input id="username" type="text" name="username" class="form-control" value="{{ old('username') }}">
+                                <div id="usernameFeedback" class="feedback"></div>
                             </div>
                         </div>
 
                         <!-- email -->
                         <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">Correo Electrónico</label>
-                            
                             <div class="col-md-6">
-                                <input id="email" type="email" name="email" class="form-control @error('email') is-invalid @else is-valid @enderror" value="{{ old('email') }}">
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input id="email" type="email" name="email" class="form-control" value="{{ old('email') }}">
+                                <div id="emailFeedback" class="feedback"></div>
                             </div>
                         </div>
 
                         <!-- password -->
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">Contraseña</label>
-                            
                             <div class="col-md-6">
-                                <input id="password" type="password" name="password" class="form-control @error('password') is-invalid @else is-valid @enderror" value="{{ old('password') }}">
-                                @error('password')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input id="password" type="password" name="password" class="form-control">
                             </div>
                         </div>
 
-                        <!-- password_conf -->
+                        <!-- password_confirmation -->
                         <div class="form-group row">
                             <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">Confirmar Contraseña</label>
-                            
                             <div class="col-md-6">
-                                <input id="password_confirmation" type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @else is-valid @enderror">
-                                @error('password_confirmation')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <input id="password_confirmation" type="password" name="password_confirmation" class="form-control">
                             </div>
                         </div>
 
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    Registrarse
-                                </button>
+                                <button type="submit" class="btn btn-primary">Registrarse</button>
                             </div>
                         </div>
                     </form>

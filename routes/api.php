@@ -76,7 +76,7 @@ Route::get('/proximos-eventos', [HomeController::class, 'proximosEventos']);
 Route::prefix('eventos')->group(function () {
     Route::get('{id}/participantes', [EventoController::class, 'obtenerParticipantes']);
 });
-Route::post('eventos/{evento}/inscribirse', [EventoController::class, 'inscribirse']);
+Route::post('eventos/{evento}/inscribirse', [EventoController::class, 'inscribirse'])->middleware('auth:sanctum');
 
 //SEGUNDA MANO
 Route::get('/segunda-mano', [segundaManoController::class, 'index']);

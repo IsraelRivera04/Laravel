@@ -16,6 +16,9 @@ class Evento extends Model
         'ubicacion',
         'precio',
         'imagen',
+        'hora_inicio',
+        'hora_final',
+        'plazas',
     ];
 
     public function setImagenAttribute($value)

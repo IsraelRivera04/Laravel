@@ -15,7 +15,7 @@ class EventoController extends Controller
     $eventos->orderBy('fecha', 'asc');
 
     // Paginar los resultados
-    $eventos = $eventos->paginate(5);
+    $eventos = $eventos->paginate(1000);
 
     // Detectar si la solicitud viene desde Angular
     $origin = $request->headers->get('origin'); // Origen de la solicitud
@@ -40,6 +40,9 @@ class EventoController extends Controller
         'descripcion' => 'nullable|string|max:1000',
         'fecha' => 'required|date',
         'ubicacion' => 'nullable|string|max:255',
+        'hora_inicio' => 'required|date_format:H:i',
+        'hora_final' => 'required|date_format:H:i|after:hora_inicio',
+        'plazas' => 'required|integer|min:1', 
         'imagen' => 'nullable|mimes:jpeg,png,jpg|max:2048',
     ]);
 
@@ -47,18 +50,16 @@ class EventoController extends Controller
 
     if ($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
         $imagen = $request->file('imagen');
-        
         $imagenBase64 = base64_encode(file_get_contents($imagen->getRealPath()));
-
         $evento->imagen = $imagenBase64;
     }
+
     $evento->usuario_id = Auth::id();
+
     $evento->save();
 
     return redirect()->route('eventos.index')->with('success', 'Evento creado con éxito.');
 }
-
-
 
 public function show(Request $request, $id)
 {
@@ -73,10 +74,6 @@ public function show(Request $request, $id)
     // Si viene de Laravel, mostrar la vista del detalle
     return view('eventos.show', compact('evento'));
 }
-
-
-
-
 
     public function edit(Evento $evento)
     {
@@ -123,32 +120,54 @@ public function show(Request $request, $id)
         return response()->json($participantes);
     }
 
-
-    // En el controlador de eventos
-    public function inscribirse($eventoId)
+    public function inscribirse(Request $request, Evento $evento)
     {
-        // Obtén el evento
-        $evento = Evento::find($eventoId);
+        // Verifica si el usuario ya está inscrito
+        if ($evento->participantes->contains(auth()->id())) {
+            // Respuesta en caso de que ya esté inscrito
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Ya estás inscrito en este evento.',
+                ], 409);
+            }
     
-        // Verifica si el evento existe
-        if (!$evento) {
-            return response()->json(['error' => 'Evento no encontrado'], 404);
+            return redirect()->route('eventos.show', $evento->id)
+                             ->with('error', 'Ya estás inscrito en este evento.');
         }
     
         // Verifica si hay plazas disponibles
-        if ($evento->plazas_disponibles <= 0) {
-            return response()->json(['error' => 'No hay plazas disponibles'], 400);
+        if ($evento->plazas > $evento->participantes()->count()) {
+            // Inscribe al usuario
+            $evento->participantes()->attach(auth()->id());
+    
+            \Log::info("Usuario con ID " . auth()->id() . " inscrito en evento ID " . $evento->id);
+    
+            // Verificar si la solicitud es desde Angular
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'Te has inscrito con éxito al evento.',
+                    'evento' => $evento,
+                ], 200);
+            }
+    
+            // Redirigir en caso de que la solicitud sea desde Laravel
+            return redirect()->route('eventos.show', $evento->id)
+                             ->with('success', 'Te has inscrito con éxito al evento.');
+        } else {
+            // Si no hay plazas disponibles, enviar una respuesta de error
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => 'No hay plazas disponibles en este evento.',
+                ], 400);
+            }
+    
+            return redirect()->route('eventos.show', $evento->id)
+                             ->with('error', 'No hay plazas disponibles en este evento.');
         }
-    
-        // Lógica para inscribir al usuario (suponiendo que el usuario está autenticado)
-        $evento->usuarios()->attach(auth()->id());  // Asumiendo que tienes una relación many-to-many
-    
-        // Disminuye las plazas disponibles
-        $evento->plazas_disponibles -= 1;
-        $evento->save();
-    
-        return response()->json(['message' => 'Inscripción exitosa']);
     }
+    
+    
+    
     
 /**
  * Manejar respuestas para solicitudes web y JSON.

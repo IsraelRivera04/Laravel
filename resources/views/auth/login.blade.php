@@ -8,15 +8,18 @@
             <div class="card">
                 <div class="card-header">Formulario de Login</div>
 
-                <div class="card body">
-                    <form method="POST" action="{{ route('login') }}">
+                <div class="card-body">
+                    <form method="POST" action="{{ route('login') }}" id="loginForm">
                         @csrf
 
                         <div class="form-group row">
                             <label for="username" class="col-md-4 col-form-label text-md-right">Nombre de Usuario</label>
                             
                             <div class="col-md-6">
-                                <input id="username" type="text" name="username" class="form-control @error('username') is-invalid @else is-valid @enderror" value="{{ old('username') }}">
+                                <input id="username" type="text" name="username" 
+                                    class="form-control" 
+                                    value="{{ old('username') }}" 
+                                    required>
                                 @error('username')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -27,7 +30,10 @@
                             <label for="password" class="col-md-4 col-form-label text-md-right">Contraseña</label>
                             
                             <div class="col-md-6">
-                                <input id="password" type="password" name="password" class="form-control @error('password') is-invalid @else is-valid @enderror" value="{{ old('password') }}">
+                                <input id="password" type="password" name="password" 
+                                    class="form-control" 
+                                    value="{{ old('password') }}" 
+                                    required>
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -47,4 +53,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('loginForm');
+        const inputs = form.querySelectorAll('.form-control');
+
+        inputs.faorEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.value.trim() === '') {
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                }
+            });
+        });
+    });
+</script>
 @endsection

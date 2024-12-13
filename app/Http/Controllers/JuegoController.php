@@ -16,25 +16,37 @@ class JuegoController extends Controller
     public function index(Request $request)
     {
         $juegos = Juego::query();
-    
+      
         // Filtro opcional por ofertas
         if ($request->has('oferta') && $request->oferta == '1') {
             $juegos->where('oferta', true);
         }
-    
+      
+        // Filtro por nombre
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $juegos->where('nombre', 'LIKE', '%' . $search . '%');
+        }
+      
+        // Ordenar por nombre ascendente o descendente
+        if ($request->has('orden_nombre')) {
+            $juegos->orderBy('nombre', $request->input('orden_nombre')); // 'asc' o 'desc'
+        }
+      
         // Paginar los resultados
-        $juegos = $juegos->paginate(10);
-    
+        $juegos = $juegos->paginate(1000);
+      
         // Si la solicitud espera JSON (usado por Angular)
         if ($request->wantsJson()) {
             return response()->json($juegos, 200);
         }
-    
+      
         // Si la solicitud espera una vista (usado por Laravel)
         return view('juegos.index', compact('juegos'));
     }
     
-
+    
+    
 
     /**
      * Show the form for creating a new resource.
@@ -113,26 +125,31 @@ class JuegoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-    $juego = Juego::find($id); // Busca el juego por su ID
-
-    if (!$juego) {
-        return response()->json(['error' => 'Juego no encontrado'], 404);
+        $juego = Juego::find($id); // Busca el juego por su ID
+    
+        if (!$juego) {
+            if ($request->wantsJson()) {
+                // Si la solicitud es de Angular, devuelve un JSON con el error
+                return response()->json(['error' => 'Juego no encontrado'], 404);
+            }
+    
+            // Si la solicitud es de Laravel, redirige a la vista index con un mensaje de error
+            return redirect()->route('juegos.index')->with('error', 'Juego no encontrado.');
+        }
+    
+        if ($request->wantsJson()) {
+            // Si la solicitud es de Angular, devuelve el juego en formato JSON
+            return response()->json($juego, 200);
+        }
+    
+        // Si la solicitud es de Laravel, retorna la vista del detalle
+        return view('juegos.show', compact('juego'));
     }
-
-    return response()->json($juego); // Retorna el juego en formato JSON
-    }
-    public function showView($id)
-{
-    $juego = Juego::find($id); // Busca el juego por su ID
-
-    if (!$juego) {
-        return redirect()->route('juegos.index')->with('error', 'Juego no encontrado.');
-    }
-
-    return view('juegos.show', compact('juego')); // Retorna la vista del detalle
-}
+    
+    
+    
 
 
 

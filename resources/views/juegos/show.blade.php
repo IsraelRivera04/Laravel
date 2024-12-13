@@ -138,27 +138,6 @@
     <p class="mt-3">Aún no hay comentarios para este juego.</p>
 @endif
 
-    <h3 class="mt-5"><strong>Complementos relacionados:</strong></h3>
-    @if($complementos->isEmpty())
-        <p class="text-muted">Este juego no tiene complementos disponibles.</p>
-    @else
-        <div class="row mt-4">
-            @foreach($complementos as $complemento)
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <img src="{{ $complemento->imagen }}" alt="Imagen del complemento" class="card-img-top img-complemento">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $complemento->nombre }}</h5>
-                            <p class="card-text">{{ \Illuminate\Support\Str::limit($complemento->descripcion, 100) }}</p>
-                            <p class="text-success"><strong>Precio: {{ number_format($complemento->precio, 2) }}€</strong></p>
-                            <a href="{{ route('complementos.show', $complemento->id) }}" class="btn btn-primary">Ver detalle</a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
-
     <div class="mt-2 mb-4">
         <a href="{{ route('juegos.index') }}" class="btn btn-secondary">Volver al listado</a>
     </div>
