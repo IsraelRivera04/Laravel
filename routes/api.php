@@ -104,3 +104,6 @@ Route::post('/juegos/{juego}/comentarios', [ComentarioController::class, 'storeC
 
 Route::get('juegos/{juegoId}/comentarios', [ComentarioController::class, 'index'])->middleware('auth:sanctum');
 
+//Search Bar
+Route::get('/juegos/buscar', [JuegoController::class, 'buscar']);
+

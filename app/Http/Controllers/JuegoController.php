@@ -44,9 +44,14 @@ class JuegoController extends Controller
         // Si la solicitud espera una vista (usado por Laravel)
         return view('juegos.index', compact('juegos'));
     }
-    
-    
-    
+
+    public function buscar(Request $request)
+    {
+    $term = $request->input('term');
+    $juegos = Juego::where('nombre', 'like', "%$term%")->get();
+    return response()->json($juegos);
+    }
+
 
     /**
      * Show the form for creating a new resource.
