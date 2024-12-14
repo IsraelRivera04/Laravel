@@ -68,8 +68,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('nuevoEventoForm');
         const inputs = form.querySelectorAll('.form-control');
-        
-        // Función para validar cada campo
+
         const validateInput = (input) => {
             const name = input.name;
             const value = input.value.trim();
@@ -80,7 +79,6 @@
                     isValid = value.length > 0 && value.length <= 255;
                     break;
                 case 'descripcion':
-                    // La descripción puede ser nula, así que no se valida aquí.
                     break;
                 case 'fecha':
                     isValid = value !== '';
@@ -98,7 +96,6 @@
                     isValid = value > 0;
                     break;
                 case 'imagen':
-                    // La imagen puede ser nula, por lo que no validamos siempre.
                     if (input.files.length > 0) {
                         isValid = ['image/jpeg', 'image/png', 'image/jpg'].includes(input.files[0].type);
                     }
@@ -114,12 +111,10 @@
             }
         };
 
-        // Asignar evento 'blur' a cada campo para validación al salir del campo
         inputs.forEach(input => {
             input.addEventListener('blur', () => validateInput(input));
         });
 
-        // Validar todos los campos al enviar el formulario
         form.addEventListener('submit', function (e) {
             let valid = true;
             inputs.forEach(input => {
@@ -130,7 +125,7 @@
             });
 
             if (!valid) {
-                e.preventDefault();  // Evita el envío si hay campos inválidos
+                e.preventDefault();
             }
         });
     });

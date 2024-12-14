@@ -22,9 +22,6 @@ class segundaManoController extends Controller
     
         return view('segundaMano.index', compact('segundaManoJuegos'));
     }
-    
-    
-
 
     /**
      * Show the form for creating a new resource.
@@ -101,22 +98,18 @@ class segundaManoController extends Controller
      */
     public function show(Request $request, $id)
     {
-        // Buscar el juego de segunda mano
         $segundaManoJuego = segundaManoJuego::findOrFail($id);
         
-        // Obtener complementos relacionados
         $complementos = Complemento::where('nombre', 'LIKE', '%' . $segundaManoJuego->nombre . '%')->get();
     
-        // Detectar si la solicitud viene desde Angular
-        $origin = $request->headers->get('origin'); // Origen de la solicitud
+        $origin = $request->headers->get('origin'); 
         if ($origin === 'http://localhost:4200') {
             return response()->json([
                 'segundaManoJuego' => $segundaManoJuego,
                 'complementos' => $complementos,
             ], 200);
         }
-    
-        // Si viene de Laravel, mostrar la vista del detalle
+
         return view('segundaMano.show', compact('segundaManoJuego', 'complementos'));
     }
     

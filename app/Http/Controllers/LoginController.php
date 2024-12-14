@@ -125,33 +125,23 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         try {
-            // Revocar la sesión del usuario
             Auth::logout();
     
             if ($request->wantsJson()) {
-                // Respuesta JSON para Angular
                 return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
             }
-    
-            // Redirigir a la página de inicio de sesión en Laravel
             return redirect('/login')->with('message', 'Sesión cerrada correctamente');
         } catch (\Exception $e) {
             if ($request->wantsJson()) {
-                // Manejo de error en JSON para Angular
                 return response()->json([
                     'message' => 'Error al cerrar sesión',
                     'error' => $e->getMessage(),
                 ], 500);
             }
-    
-            // Manejo de error con redirección en Laravel
             return redirect('/login')->withErrors(['error' => 'Error al cerrar sesión']);
         }
     }
     
-    
-    
-
     public function user(Request $request)
     {
         return $request->user();

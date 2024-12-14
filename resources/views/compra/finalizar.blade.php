@@ -47,7 +47,6 @@
         const form = document.getElementById('finalizar-compra-form');
         const inputs = form.querySelectorAll('.form-control');
 
-        // Función para validar los campos
         const validateInput = (input) => {
             const name = input.name;
             const value = input.value.trim();
@@ -58,7 +57,7 @@
                     isValid = value.length > 0;
                     break;
                 case 'telefono':
-                    isValid = /^\d{9}$/.test(value); // Validar número de teléfono (9 dígitos)
+                    isValid = /^\d{9}$/.test(value); 
                     break;
             }
 
@@ -71,12 +70,10 @@
             }
         };
 
-        // Validar cada campo cuando pierda el foco (blur)
         inputs.forEach(input => {
             input.addEventListener('blur', () => validateInput(input));
         });
 
-        // Validar todos los campos antes de enviar el formulario
         form.addEventListener('submit', function (e) {
             let valid = true;
             inputs.forEach(input => {
@@ -87,7 +84,7 @@
             });
 
             if (!valid) {
-                e.preventDefault();  // Evita el envío si hay campos inválidos
+                e.preventDefault(); 
             }
         });
     });

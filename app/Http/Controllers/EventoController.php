@@ -11,19 +11,15 @@ class EventoController extends Controller
 {
     $eventos = Evento::query();
 
-    // Ordenar por fecha
     $eventos->orderBy('fecha', 'asc');
 
-    // Paginar los resultados
     $eventos = $eventos->paginate(1000);
 
-    // Detectar si la solicitud viene desde Angular
-    $origin = $request->headers->get('origin'); // Origen de la solicitud
+    $origin = $request->headers->get('origin');
     if ($origin === 'http://localhost:4200') {
         return response()->json($eventos, 200);
     }
 
-    // Si viene de Laravel
     return view('eventos.index', compact('eventos'));
 }
 
@@ -63,15 +59,13 @@ class EventoController extends Controller
 
 public function show(Request $request, $id)
 {
-    $evento = Evento::findOrFail($id); // Buscar el evento por ID o lanzar error 404
+    $evento = Evento::findOrFail($id); 
 
-    // Detectar si la solicitud viene desde Angular
-    $origin = $request->headers->get('origin'); // Origen de la solicitud
+    $origin = $request->headers->get('origin');
     if ($origin === 'http://localhost:4200') {
         return response()->json(['data' => $evento], 200);
     }
 
-    // Si viene de Laravel, mostrar la vista del detalle
     return view('eventos.show', compact('evento'));
 }
 
@@ -122,9 +116,7 @@ public function show(Request $request, $id)
 
     public function inscribirse(Request $request, Evento $evento)
     {
-        // Verifica si el usuario ya está inscrito
         if ($evento->participantes->contains(auth()->id())) {
-            // Respuesta en caso de que ya esté inscrito
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'Ya estás inscrito en este evento.',
@@ -134,27 +126,20 @@ public function show(Request $request, $id)
             return redirect()->route('eventos.show', $evento->id)
                              ->with('error', 'Ya estás inscrito en este evento.');
         }
-    
-        // Verifica si hay plazas disponibles
         if ($evento->plazas > $evento->participantes()->count()) {
-            // Inscribe al usuario
+
             $evento->participantes()->attach(auth()->id());
-    
-            \Log::info("Usuario con ID " . auth()->id() . " inscrito en evento ID " . $evento->id);
-    
-            // Verificar si la solicitud es desde Angular
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'Te has inscrito con éxito al evento.',
                     'evento' => $evento,
                 ], 200);
             }
-    
-            // Redirigir en caso de que la solicitud sea desde Laravel
+
             return redirect()->route('eventos.show', $evento->id)
                              ->with('success', 'Te has inscrito con éxito al evento.');
         } else {
-            // Si no hay plazas disponibles, enviar una respuesta de error
             if ($request->wantsJson()) {
                 return response()->json([
                     'message' => 'No hay plazas disponibles en este evento.',
@@ -165,23 +150,17 @@ public function show(Request $request, $id)
                              ->with('error', 'No hay plazas disponibles en este evento.');
         }
     }
-    
-    
-    
-    
-/**
- * Manejar respuestas para solicitudes web y JSON.
- */
-private function responseWithMessage(string $message, string $type)
-{
-    if (request()->wantsJson()) {
-        $status = $type === 'success' ? 200 : 400;
-        return response()->json(['message' => $message, 'type' => $type], $status);
-    }
 
-    $redirectType = $type === 'success' ? 'success' : 'error';
-    return redirect()->back()->with($redirectType, $message);
-}
+    private function responseWithMessage(string $message, string $type)
+    {
+        if (request()->wantsJson()) {
+            $status = $type === 'success' ? 200 : 400;
+            return response()->json(['message' => $message, 'type' => $type], $status);
+        }
+
+        $redirectType = $type === 'success' ? 'success' : 'error';
+        return redirect()->back()->with($redirectType, $message);
+    }
 
     
 

@@ -31,24 +31,19 @@ class ComentarioController extends Controller
 
     public function storeComentario(Request $request, $juegoId)
     {
-        // Validar los datos del formulario
         $validatedData = $request->validate([
             'comentario' => 'required|string|max:1000',
             'valoracion' => 'required|integer|min:1|max:10',
         ]);
-
-        // Verificar que el juego existe
         $juego = Juego::findOrFail($juegoId);
 
-        // Crear el comentario
         $comentario = new Comentario();
         $comentario->comentario = $validatedData['comentario'];
         $comentario->valoracion = $validatedData['valoracion'];
         $comentario->juego_id = $juego->id;
-        $comentario->usuario_id = auth()->id(); // Asegúrate de que el usuario esté autenticado
+        $comentario->usuario_id = auth()->id(); 
         $comentario->save();
 
-        // Respuesta
         return response()->json([
             'message' => 'Comentario creado con éxito',
             'comentario' => $comentario,

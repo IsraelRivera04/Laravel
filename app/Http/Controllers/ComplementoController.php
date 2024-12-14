@@ -15,18 +15,15 @@ class ComplementoController extends Controller
     public function index(Request $request)
     {
         $complementos = Complemento::query();
-      
-        // Ordenar por nombre o precio según los parámetros de la solicitud
+
         if ($request->has('orden') && $request->orden == 'precio') {
             $complementos->orderBy('precio', $request->get('direction', 'asc'));
         } else {
             $complementos->orderBy('nombre', $request->get('direction', 'asc'));
         }
-      
-        // Paginar los resultados
+
         $complementos = $complementos->paginate(1000);
-      
-        // Detectar si la solicitud viene desde Angular
+
         $origin = $request->headers->get('origin');
         if ($origin === 'http://localhost:4200') {
             return response()->json($complementos, 200);
@@ -92,13 +89,11 @@ class ComplementoController extends Controller
 {
     $complemento = Complemento::findOrFail($id);
 
-    // Detectar si la solicitud viene desde Angular
-    $origin = $request->headers->get('origin'); // Origen de la solicitud
+    $origin = $request->headers->get('origin'); 
     if ($origin === 'http://localhost:4200') {
         return response()->json($complemento, 200);
     }
 
-    // Si viene de Laravel, mostrar la vista del detalle
     return view('complementos.show', compact('complemento'));
 }
 

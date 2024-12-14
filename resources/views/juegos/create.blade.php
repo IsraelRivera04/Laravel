@@ -152,7 +152,6 @@
         const form = document.getElementById('nuevoJuegoForm');
         const inputs = form.querySelectorAll('.form-control');
 
-        // Función para validar cada campo
         const validateInput = (input) => {
             const name = input.name;
             const value = input.value.trim();
@@ -163,7 +162,6 @@
                     isValid = value.length > 0 && value.length <= 100;
                     break;
                 case 'descripcion':
-                    // No validación específica porque es nullable
                     break;
                 case 'edicion':
                     isValid = value.length <= 50;
@@ -208,7 +206,6 @@
             }
         };
 
-        // Asignar evento 'blur' a cada campo
         inputs.forEach(input => {
             input.addEventListener('blur', () => validateInput(input));
         });

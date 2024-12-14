@@ -253,17 +253,14 @@ class CarritoController extends Controller
 
     public function eliminarItem($itemId)
     {
-        // Obtener el carrito del usuario
         $carrito = Carrito::where('usuario_id', auth()->id())->first();
     
-        // Buscar el item en el carrito
         $item = $carrito->items()->find($itemId);
     
         if (!$item) {
             return response()->json(['error' => 'Producto no encontrado en el carrito.'], 404);
         }
-    
-        // Restaurar stock del producto antes de eliminar
+
         if ($item->producto_type === 'App\Models\Juego') {
             $producto = Juego::find($item->producto_id);
         } elseif ($item->producto_type === 'App\Models\Complemento') {
@@ -274,8 +271,7 @@ class CarritoController extends Controller
             $producto->stock += $item->cantidad;
             $producto->save();
         }
-    
-        // Eliminar el producto del carrito
+
         $item->delete();
     
         return response()->json(['success' => 'Producto eliminado del carrito.']);
@@ -315,14 +311,12 @@ class CarritoController extends Controller
 
     public function vaciarCarrito()
 {
-    // Obtener el carrito del usuario
     $carrito = Carrito::where('usuario_id', auth()->id())->first();
 
     if (!$carrito || $carrito->items->isEmpty()) {
         return response()->json(['error' => 'El carrito ya está vacío.'], 404);
     }
 
-    // Restaurar stock de todos los productos del carrito
     foreach ($carrito->items as $item) {
         if ($item->producto_type === 'App\Models\Juego') {
             $producto = Juego::find($item->producto_id);
@@ -335,8 +329,6 @@ class CarritoController extends Controller
             $producto->save();
         }
     }
-
-    // Eliminar todos los items del carrito
     $carrito->items()->delete();
 
     return response()->json(['success' => 'Carrito vaciado correctamente.']);

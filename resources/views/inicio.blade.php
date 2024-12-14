@@ -8,7 +8,7 @@
     <div class="row justify-content-center mb-4">
         <div class="col-md-6">
             <div class="card shadow-lg border-0">
-                <img src="{{ asset('storage/paginaInicio.jpeg') }}" class="card-img-top" alt="Logo de la tienda">
+                <img src="/storage/paginaInicio.jpeg" class="card-img-top" alt="Logo de la tienda">
                 <div class="card-body">
                     <h5 class="card-title">Tu tienda de confianza para juegos de mesa</h5>
                     <p class="card-text">Descubre juegos de mesa para todas las edades y gustos. Navega por nuestra selección de productos y encuentra lo que más te gusta.</p>
