@@ -157,6 +157,8 @@ class ComplementoController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $complemento = Complemento::findOrFail($id);
+        $complemento->delete();
+        return redirect()->route('complementos.index');
     }
 }

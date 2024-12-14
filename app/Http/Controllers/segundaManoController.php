@@ -183,11 +183,9 @@ class segundaManoController extends Controller
 
         if($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
             $imagen = $request->file('imagen');
-        }
-        if($imagen->getRealPath()) {
             $segundaManoJuego->imagen = base64_encode(file_get_contents($imagen->getRealPath()));
         } else {
-            return back()->withErrors(['imagen' =>'error']);
+            $segundaManoJuego->imagen = base64_encode('No hay imagen para este juego por el momento');
         }
 
         $segundaManoJuego->save();
@@ -202,7 +200,7 @@ class segundaManoController extends Controller
      */
     public function destroy($id)
     {
-        $segundaManoJuego = JuegoSegundaMano::findOrFail($id);
+        $segundaManoJuego = segundaManoJuego::findOrFail($id);
 
         if (auth()->id() !== $segundaManoJuego->usuario_id) {
             abort(403, 'No tienes permisos para eliminar este juego.');

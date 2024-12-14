@@ -153,10 +153,6 @@ class JuegoController extends Controller
         return view('juegos.show', compact('juego'));
     }
     
-    
-    
-
-
 
     /**
      * Show the form for editing the specified resource.
@@ -224,6 +220,7 @@ class JuegoController extends Controller
 
     if ($request->hasFile('imagen') && $request->file('imagen')->isValid()) {
         $imagen = $request->file('imagen');
+        
         $juego->imagen = base64_encode(file_get_contents($imagen->getRealPath()));
     } else {
         $juego->imagen = base64_encode('No hay imagen para este juego por el momento');
